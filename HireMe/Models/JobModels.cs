@@ -11,19 +11,78 @@ namespace HireMe.Models
         static int countId = 1;
 
         private int id;
-        private string Title;
-        private string description;
-        private List<string> skills;
-        private string Location;
-        private float upperSalaryRange;
-        private float lowerSalaryRange;
-        private List<ApplicationModels> applications;
+        public string Title;
+        public string description;
+        public string skills;
+        public string Location;
+        public string salary;
+        public float upperSalaryRange;
+        public float lowerSalaryRange;
+        public List<ApplicationModels> applications;
 
-        public JobModels(string title)
+        private JobModels()
         {
             id = countId++;
-            Title = title;
-            skills = new List<string>();
+            applications = new List<ApplicationModels>();
+        }
+
+        private static List<JobModels> jobList;
+        public static void prepJobList()
+        {
+            if (jobList == null)
+                jobList = new List<JobModels>();
+            else
+                return;
+            SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=|DataDirectory|/Database1.mdf;Integrated Security=True");
+            connect.Open();
+            SqlCommand comm = new SqlCommand("SELECT COUNT(*) from Job;");
+
+            SqlDataReader reader = comm.ExecuteReader();
+
+            while (reader.Read())
+            {
+                JobModels newMod = new JobModels();
+                jobList.Add(newMod);
+
+            }
+
+            connect.Close();
+
+            foreach (JobModels am in jobList)
+            {
+                am.LoadFromTable();
+            }
+        }
+
+
+        public static void addNewJob(string title, string desc, string skillReq,
+            string city, string salaryRange)
+        {
+            JobModels jm = new JobModels();
+            jobList.Add(jm);
+            jm.description = desc;
+            jm.Location = city;
+            jm.salary = salaryRange;
+            jm.skills = skillReq;
+            jm.Title = title;
+
+            SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=|DataDirectory|/Database1.mdf;Integrated Security=True");
+            connect.Open();
+            string commandStr = "INSERT INTO Job (JobTitle,Jobdescription,JobReqSkill,JobCity,JobSalaryRange)\n";
+            commandStr += " VALUES ('"+jm.Title+"','"+jm.description+"','"+jm.skills+"','"+jm.Location+"','"+jm.salary+"')";
+
+            SqlCommand comm = new SqlCommand(commandStr, connect);
+            comm.ExecuteNonQuery();
+            connect.Close();
+
+        }
+
+        public static JobModels getJobModel(int c)
+        {
+            if (c < 0 || c > jobList.Count())
+                return null;
+            return jobList.ElementAt(c);
+
         }
 
         public int getId()
@@ -31,112 +90,36 @@ namespace HireMe.Models
             return id;
         }
 
-        public string getTitle()
-        { return Title; }
 
-        public void setDescription(string desc)
-        {
-            description = desc;
-        }
-
-        public string getDescription()
-        {
-            return description;
-        }
-
-        public void addSkill(string skill)
-        {
-            skills.Add(skill);
-        }
-
-        public string getSkill(int c)
-        {
-            if (c > skills.Count() || c < 1)
-                return null;
-            return skills.ElementAt(c-1);
-        }
-
-        public string removeSkill(int c)
-        {
-            if (c > skills.Count() || c < 1)
-                return null;
-            string retunable = skills.ElementAt(c-1);
-            skills.RemoveAt(c - 1);
-            return retunable;
-        }
-
-        public bool removeSkill(string str)
-        {
-            return skills.Remove(str);
-        }
-
-        public void setLocation(string str)
-        {
-            Location = str;
-        }
-
-        public string getLocation()
-        {
-            return Location;
-        }
-
-        public float getUpperSalary()
-        {
-            return upperSalaryRange;
-        }
-
-        public float getLowerSalary()
-        {
-            return lowerSalaryRange;
-        }
-
-        public void setUpperSalary(float money)
-        {
-            if (money < 0)
-                throw new IndexOutOfRangeException("You need to Pay workers, not charge them!");
-            if (money < lowerSalaryRange)
-                lowerSalaryRange = money;
-            upperSalaryRange = money;
-        }
-
-        public void setLowerSalary(float money)
-        {
-            if (money < 0)
-                throw new IndexOutOfRangeException("You need to Pay workers, not charge them!");
-            if (money > upperSalaryRange)
-                upperSalaryRange = money;
-            lowerSalaryRange = money;
-        }
-
-        public void AddApplication(ApplicationModels am)
-        {
-            if (am == null)
-                return;
-
-            applications.Add(am);
-        }
-
-        public ApplicationModels getApplicationModel(int c)
-        {
-            if (c > applications.Count() || c < 1)
-                return null;
-
-            return applications.ElementAt(c - 1);
-        }
-
-        public List<ApplicationModels> getApplications()
-        {
-            return new List<ApplicationModels>(applications);
-        }
 
         public void SaveToTable()
         {
+            SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=|DataDirectory|/Database1.mdf;Integrated Security=True");
+            connect.Open();
+            string commandStr = "UPDATE " + id + "from Job\n";
+            commandStr += " SET JobTitle='" + Title + "', Jobdescription='" + description + "', \n";
+           
+            commandStr += " JobReqSkill='" + skills + "', JobCity='" + Location + "', JobSalaryRange='" + salary+ "'\n";
 
+            commandStr += " WHERE JobID=" + id + ";";
+            SqlCommand command = new SqlCommand(commandStr,connect);
+
+            command.ExecuteNonQuery();
         }
 
         public void LoadFromTable()
         {
-            //SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename='';Integrated Security=True");
+            SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=|DataDirectory|/Database1.mdf;Integrated Security=True");
+            connect.Open();
+            SqlCommand command = new SqlCommand("SELECT " + id + "from Job;", connect);
+            SqlDataReader reader = command.ExecuteReader();
+            Title = reader.GetString(1);
+            description = reader.GetString(2);
+            skills = reader.GetString(3);
+
+            Location = reader.GetString(4);
+            salary = reader.GetString(5);
+
         }
     }
 }
