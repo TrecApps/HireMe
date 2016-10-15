@@ -13,5 +13,10 @@ namespace HireMe.Controllers
         {
             return View();
         }
+
+        public ActionResult JobID(int id)
+        {
+            return View();
+        }
     }
 }
