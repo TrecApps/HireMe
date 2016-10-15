@@ -1,10 +1,10 @@
 use HireMe;
 
-if (OBJECT_ID('Candidate') is not null)
-drop table Candidate;
-
 if (OBJECT_ID('App') is not null)
 drop table App;
+
+if (OBJECT_ID('Candidate') is not null)
+drop table Candidate;
 
 if (OBJECT_ID('Job') is not null)
 drop table Job;
@@ -17,7 +17,6 @@ create table Recruiter
 (RecruiterID int identity(100,1) primary key,
 RecruiterCompany varchar(20) not null,
 RecruiterLastName varchar(20) not null);
-
 go
 
 create table Job
@@ -32,6 +31,12 @@ constraint fkJobToRecruiter foreign key(RecruiterID)
 references Recruiter(RecruiterID));
 go
 
+create table Candidate
+(CSSN int identity (100,1) primary key,
+CFname varchar(15),
+CLName varchar(20));
+go
+
 create table App
 (ACRN int identity (100,1) primary key,
 AName varchar(20) not null,
@@ -42,12 +47,8 @@ AEducation varchar(20) not null,
 Areason varchar(100) not null,
 JobID int not null,
 constraint fkApplicationToJob foreign key(JobID)
-references Job(JobID));
+references Job(JobID),
+CSSN int not null,
+constraint fkCandidateToApp foreign key(CSSN)
+references Candidate(CSSN));
 go
-
-create table Candidate
-(CSSN int identity (100,1) primary key,
-CFname varchar(15),
-CLName varchar(20));
-
-

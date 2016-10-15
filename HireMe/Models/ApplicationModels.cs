@@ -9,7 +9,7 @@ namespace HireMe.Models
 {
     public class ApplicationModels
     {
-        private int id;
+        public int id;
         public string Name { get; set; }
         public string City { get; set; }
         public string State { get; set; }
@@ -21,7 +21,7 @@ namespace HireMe.Models
         private static int idCount= 1;
         private static List<ApplicationModels> ModelList;
 
-        private ApplicationModels()
+        public ApplicationModels()
         {
             id = idCount++;
         }

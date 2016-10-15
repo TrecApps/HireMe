@@ -10,7 +10,7 @@ namespace HireMe.Models
     {
         static int countId = 1;
 
-        private int id;
+        public int id;
         public string Title;
         public string description;
         public string skills;
@@ -20,7 +20,7 @@ namespace HireMe.Models
         public float lowerSalaryRange;
         public List<ApplicationModels> applications;
 
-        private JobModels()
+        public JobModels()
         {
             id = countId++;
             applications = new List<ApplicationModels>();
