@@ -7,10 +7,11 @@ namespace HireMe.Models
 {
     public class ApplicationModels
     {
-        public string firstName, lastName;
+        public string firstName { get; set; }
+        public string lastName {get;set;}
         public List<string> skills;
         public List<string> education;
-        public string reason;
+        public string reason { get; set; }
 
         public ApplicationModels(string fn, string ln)
         {
