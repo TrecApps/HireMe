@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
@@ -126,6 +127,16 @@ namespace HireMe.Models
         public List<ApplicationModels> getApplications()
         {
             return new List<ApplicationModels>(applications);
+        }
+
+        public void SaveToTable()
+        {
+
+        }
+
+        public void LoadFromTable()
+        {
+            //SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename='';Integrated Security=True");
         }
     }
 }
