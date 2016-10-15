@@ -19,12 +19,13 @@ namespace HireMe.Controllers
 
             return View();
         }
-
-        public ActionResult Contact()
+        public ActionResult Joblist()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Available jobs";
 
             return View();
         }
+
+        
     }
 }
